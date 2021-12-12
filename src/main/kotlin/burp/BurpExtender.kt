@@ -79,8 +79,8 @@ class BurpExtender : IBurpExtender, IScannerCheck {
                     sb.append(interaction.getProperty("client_ip"))
                     sb.append("</b></li>")
                 }
-                sb.append("</ul><p>This means that the web service (or another node in the network) is affected by this vulnerability.")
-                sb.append("However, actual exploitability might depend on an attacker-controllable LDAP being reachable over the network.")
+                sb.append("</ul><p>This means that the web service (or another node in the network) is affected by this vulnerability. ")
+                sb.append("However, actual exploitability might depend on an attacker-controllable LDAP being reachable over the network.</p>")
                 return sb.toString()
             }
         })
