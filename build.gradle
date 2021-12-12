@@ -1,0 +1,94 @@
+/*
+ * This file is part of Piper for Burp Suite (https://github.com/silentsignal/burp-piper)
+ * Copyright (c) 2018 Andras Veres-Szentkiralyi
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'com.google.protobuf'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildscript {
+    ext.kotlin_version = '1.4.10'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "com.google.protobuf:protobuf-lite:3.0.0"
+    compile "org.snakeyaml:snakeyaml-engine:1.0"
+
+    compile 'net.portswigger.burp.extender:burp-extender-api:1.7.22'
+    compile 'com.esotericsoftware:minlog:1.3'
+
+    testCompile "org.testng:testng:6.9.10"
+}
+
+jar {
+    sourceSets {
+        sourceSets.main.java.srcDirs += 'build/generated/source/proto/main/java'
+    }
+    from('src/main/yaml') {
+        include('*.yaml')
+    }
+	from('static') {
+		include('mime.pb')
+	}
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+protobuf {
+    protoc { artifact = 'com.google.protobuf:protoc:3.0.0' }
+    plugins {
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.plugins {
+                javalite { }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += file("${protobuf.generatedFilesBaseDir}/main/javalite")
+        }
+    }
+}
