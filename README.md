@@ -1,4 +1,4 @@
-Log4shell scanner for Burp Suite
+Log4Shell scanner for Burp Suite
 ================================
 
 Building

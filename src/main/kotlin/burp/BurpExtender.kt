@@ -1,5 +1,5 @@
 /*
- * This file is part of Log4shell scanner for Burp Suite (https://github.com/silentsignal/burp-piper)
+ * This file is part of Log4Shell scanner for Burp Suite (https://github.com/silentsignal/burp-piper)
  * Copyright (c) 2021 Andras Veres-Szentkiralyi
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ package burp
 import java.net.URL
 import java.util.*
 
-const val NAME = "Log4shell scanner"
+const val NAME = "Log4Shell scanner"
 
 class BurpExtender : IBurpExtender, IScannerCheck {
 
@@ -69,7 +69,7 @@ class BurpExtender : IBurpExtender, IScannerCheck {
             override fun getHttpMessages(): Array<IHttpRequestResponse> = arrayOf(markers)
             override fun getHttpService(): IHttpService = hrr.httpService
             override fun getIssueDetail(): String {
-                val sb = StringBuilder("<p>The application interacted with the Collaborator server in response to a request with a Log4shell payload</p><ul>")
+                val sb = StringBuilder("<p>The application interacted with the Collaborator server in response to a request with a Log4Shell payload</p><ul>")
                 for (interaction in interactions) {
                     sb.append("<li><b>")
                     sb.append(interaction.getProperty("type"))
