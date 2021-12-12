@@ -71,9 +71,10 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             val request = insertionPoint!!.buildRequest(bytes)
             val poff = insertionPoint.getPayloadOffsets(bytes)
             val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
-            context.add(Pair(hrr, poff))
+            val contextPair = Pair(hrr, poff)
+            context.add(contextPair)
             collabResults.addAll(collaborator.fetchCollaboratorInteractionsFor(payload))
-            crontab[payload] = Pair(hrr, poff)
+            crontab[payload] = contextPair
         }
         val interactions = handleInteractions(context, collabResults, sync = true)
         synchronized(thread) {
