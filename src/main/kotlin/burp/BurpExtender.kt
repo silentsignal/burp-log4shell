@@ -113,7 +113,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                     sb.append("</b></li>")
                 }
                 sb.append("</ul><p>This means that the web service (or another node in the network) is affected by this vulnerability. ")
-                sb.append("However, actual exploitability might depend on an attacker-controllable LDAP being reachable over the network.</p>")
+                sb.append("However, actual exploitability might depend on an attacker-controllable LDAP server being reachable over the network.</p>")
                 if (!sync) {
                     sb.append("<p>Since this interaction occurred <b>some time after the original request</b> (compare " +
                             "the <code>Date</code> header of the HTTP response vs. the interactions timestamps above), " +
