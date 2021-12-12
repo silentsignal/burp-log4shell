@@ -1,6 +1,8 @@
 Log4Shell scanner for Burp Suite
 ================================
 
+![screenshot](screenshot.png)
+
 Building
 --------
 
