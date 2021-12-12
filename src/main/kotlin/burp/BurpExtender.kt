@@ -103,21 +103,7 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                     sb.append("some time after")
                 }
                 sb.append("</b> a request with a Log4Shell payload</p><ul>")
-                for (interaction in interactions) {
-                    val type = interaction.getProperty("type")
-                    if (type == "DNS") {
-                        sb.append("<li>By the host named <b>")
-                        sb.append(extractHostname(helpers.base64Decode(interaction.getProperty("raw_query"))))
-                    } else {
-                        sb.append("<li><b>")
-                        sb.append(type)
-                    }
-                    sb.append("</b> at <b>")
-                    sb.append(interaction.getProperty("time_stamp"))
-                    sb.append("</b> from <b>")
-                    sb.append(interaction.getProperty("client_ip"))
-                    sb.append("</b></li>")
-                }
+                interactions.map(this::formatInteraction).toSortedSet().forEach { sb.append(it) }
                 sb.append("</ul><p>This means that the web service (or another node in the network) is affected by this vulnerability. ")
                 sb.append("However, actual exploitability might depend on an attacker-controllable LDAP server being reachable over the network.</p>")
                 if (!sync) {
@@ -127,6 +113,24 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
                             "host</b> (e.g. centralized logging, SIEM). There might even be multiple instances of " +
                             "this vulnerability on different pieces of infrastructure given the nature of the bug.</p>")
                 }
+                return sb.toString()
+            }
+
+            private fun formatInteraction(interaction: IBurpCollaboratorInteraction): String {
+                val sb = StringBuilder()
+                val type = interaction.getProperty("type")
+                if (type == "DNS") {
+                    sb.append("<li>By the host named <b>")
+                    sb.append(extractHostname(helpers.base64Decode(interaction.getProperty("raw_query"))))
+                } else {
+                    sb.append("<li><b>")
+                    sb.append(type)
+                }
+                sb.append("</b> at <b>")
+                sb.append(interaction.getProperty("time_stamp"))
+                sb.append("</b> from <b>")
+                sb.append(interaction.getProperty("client_ip"))
+                sb.append("</b></li>")
                 return sb.toString()
             }
         })
