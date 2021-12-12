@@ -5,6 +5,16 @@ Log4Shell scanner for Burp Suite
 
 Detailed description can be found [in our blog post about this plugin][1].
 
+Comparison
+----------
+
+| Feature | Log4Shell scanner (this one) | ActiveScan++ (PortSwigger/active-scan-plus-plus@b485a07) |
+| --- | --- | --- |
+| Synchronous detection | ✔️ | ✔️ |
+| Asynchronous detection | ✔️ | |
+| Hostname detection | ✔️ | |
+| Username detection | ✔️ | |
+
 Building
 --------
 
