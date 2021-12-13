@@ -14,6 +14,7 @@ Comparison
 | Asynchronous detection | ✔️ | ❌ |
 | Hostname detection | ✔️ | ❌ |
 | Username detection | ✔️ | ❌ |
+| Ability for single-issue scan | ✔️ | ❌ |
 
 Building
 --------
