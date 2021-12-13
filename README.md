@@ -27,6 +27,14 @@ By following any of the instruction sets below, the the scanner will only
 perform Log4Shell checks on all insertion points if the scan configuration
 created as a result is used.
 
+### The easiest way ###
+
+Thanks to Hannah at PortSwigger for bringing this to our attention.
+
+1. When creating a new scan, click `Select from library` on the `Scan configuration` tab
+2. Pick `Audit checks - extensions only` which is built into Burp Suite Pro 2.x
+3. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
+
 ### The easy way ###
 
 This is the version that's demonstrated in the above linked video.
