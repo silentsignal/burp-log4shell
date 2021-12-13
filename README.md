@@ -3,7 +3,8 @@ Log4Shell scanner for Burp Suite
 
 ![screenshot](screenshot.png)
 
-Detailed description can be found [in our blog post about this plugin][1].
+Detailed description can be found [in our blog post about this plugin][1],
+you can also [▶️ watch a recorded demonstration video][3].
 
 Comparison
 ----------
@@ -30,7 +31,7 @@ created as a result is used.
 
 Although it might seem that this one has two more items, step 3 of the
 harder way involves ticking 152 checkboxes in a box that only displays 16
-at a time.
+at a time. This is the version that's demonstrated in the above linked video.
 
 1. Save [`extensions-only.json`][2] to your machine
 2. From the leftmost `Burp` menu, select `Configuration library`
@@ -60,3 +61,4 @@ see `LICENSE.md`.
 
 [1]: https://blog.silentsignal.eu/2021/12/12/our-new-tool-for-enumerating-hidden-log4shell-affected-hosts/
 [2]: https://raw.githubusercontent.com/silentsignal/burp-log4shell/master/extensions-only.json
+[3]: https://vimeo.com/656095367/3642ba0859
