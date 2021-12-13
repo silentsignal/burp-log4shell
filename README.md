@@ -29,9 +29,7 @@ created as a result is used.
 
 ### The easy way ###
 
-Although it might seem that this one has two more items, step 3 of the
-harder way involves ticking 152 checkboxes in a box that only displays 16
-at a time. This is the version that's demonstrated in the above linked video.
+This is the version that's demonstrated in the above linked video.
 
 1. Save [`extensions-only.json`][2] to your machine
 2. From the leftmost `Burp` menu, select `Configuration library`
@@ -40,12 +38,17 @@ at a time. This is the version that's demonstrated in the above linked video.
 5. When creating a new scan, click `Select from library` on the `Scan configuration` tab
 6. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
 
-### The harder way ###
+### The manual way ###
+
+This one used to be harder, but @alright21 made it much easier.
 
 1. Create a new `Scan Configuration`
 2. Expand `Issues Reported`
-3. Uncheck every single one of them except the last called `Extension generated issue`
-4. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
+3. Click on one of the issues to move the focus to that list
+4. Press `Ctrl` + `A`
+5. Right click on the list and click on `Enabled`, this will disable all issues
+6. Manually check the box at the last one called `Extension generated issue` to enabled that
+7. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
 
 Building
 --------
