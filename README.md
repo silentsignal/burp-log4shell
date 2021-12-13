@@ -27,8 +27,8 @@ this plugin makes it possible.
 3. Uncheck every single one of them except the last called `Extension generated issue`
 4. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
 
-This way the `Do active scan` context menu item will only perform Log4Shell
-checks on all insertion points if the scan configuration created above is used.
+This way the the scanner will only perform Log4Shell checks on all
+insertion points if the scan configuration created above is used.
 
 Building
 --------
