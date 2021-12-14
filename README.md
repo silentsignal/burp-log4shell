@@ -9,12 +9,12 @@ you can also [▶️ watch a recorded demonstration video][3].
 Note about detection capabilities: this plugin will only supply the built-in
 active scanner with payloads, thus for optimal coverage vs. performance, you'll
 have to configure your scan properly – just as with any other built-in or
-extension-provided scan. See #3 for detailed explanation regarding this matter.
+extension-provided scan. See [#3][4] for detailed explanation regarding this matter.
 
 Comparison
 ----------
 
-| Feature | Log4Shell scanner (this one) | ActiveScan++ (PortSwigger/active-scan-plus-plus@b485a07) |
+| Feature | Log4Shell scanner (this one) | ActiveScan++ ([`b485a07`][5]) |
 | --- | :---: | :---: |
 | Synchronous detection | ✔️ | ✔️ |
 | Asynchronous detection | ✔️ | ❌ |
@@ -53,7 +53,7 @@ This is the version that's demonstrated in the above linked video.
 
 ### The manual way ###
 
-This one used to be harder, but @alright21 made it much easier.
+This one used to be harder, but [@alright21 made it much easier][6].
 
 1. Create a new `Scan Configuration`
 2. Expand `Issues Reported`
@@ -78,3 +78,6 @@ see `LICENSE.md`.
 [1]: https://blog.silentsignal.eu/2021/12/12/our-new-tool-for-enumerating-hidden-log4shell-affected-hosts/
 [2]: https://raw.githubusercontent.com/silentsignal/burp-log4shell/master/extensions-only.json
 [3]: https://vimeo.com/656095367/3642ba0859
+[4]: https://github.com/silentsignal/burp-log4shell/issues/3
+[5]: https://github.com/PortSwigger/active-scan-plus-plus/commit/b485a07
+[6]: https://github.com/silentsignal/burp-log4shell/issues/1
