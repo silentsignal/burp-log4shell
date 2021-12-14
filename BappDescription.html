@@ -1,0 +1,7 @@
+<p>Log4Shell, formally known as CVE-2021-44228 seems to be the next big vulnerability that affects a huge number of systems, and the affected component, Log4j gets involved in logging untrusted data by design. This results in lots of vulnerable hosts that are hidden in the sense that naive testing won't find them, as it's not trivial to know which part of a complex parsing path (potentially involving multiple systems) is vulnerable.</p>
+
+<p>This is a Burp Extender plugin that registers itself as an Active scanner check and generates two kinds of payloads. A simpler one includes variable expansion only for the hostname, while a more complex one includes the username as well using USER and USERNAME for compatibility with both Unix-like and Windows operating systems. Synchronous interaction is logged using built-in scanner, while a background thread polls for Collaborator interactions once per minute to test for those hidden hosts and services.</p>
+
+<p>We hope that by excluding code execution functionality, we don't give the bad guys anything they already don't have while giving professional pentesters and internal security teams a tool to detect all the hidden vulnerable hosts. Having the hostname and the username is hopefully enough to identify even those processes that are not documented but still processes data at the end of a long pipeline.</p>
+
+<p>For more usage instructions, please refer to our <a href="https://github.com/silentsignal/burp-log4shell">GitHub</a>.</p>

@@ -1,0 +1,13 @@
+Uuid: b011be53649346dd87276bca41ce8e8f
+ExtensionType: 1
+Name: Log4Shell Scanner
+RepoName: log4shell-scanner
+ScreenVersion: 0.2.2
+SerialVersion: 3
+MinPlatformVersion: 0
+ProOnly: True
+Author: SilentSignal
+ShortDescription: Enumerates hidden Log4Shell-affected hosts.
+EntryPoint: build/libs/log4shell-scanner.jar
+BuildCommand: ./gradlew build
+SupportedProducts: Pro, Enterprise
