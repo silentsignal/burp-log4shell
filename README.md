@@ -6,6 +6,11 @@ Log4Shell scanner for Burp Suite
 Detailed description can be found [in our blog post about this plugin][1],
 you can also [▶️ watch a recorded demonstration video][3].
 
+Note about detection capabilities: this plugin will only supply the built-in
+active scanner with payloads, thus for optimal coverage vs. performance, you'll
+have to configure your scan properly – just as with any other built-in or
+extension-provided scan. See #3 for detailed explanation regarding this matter.
+
 Comparison
 ----------
 
