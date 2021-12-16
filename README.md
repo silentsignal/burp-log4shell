@@ -28,7 +28,7 @@ Single-issue scan
 If you'd like to scan only for Log4j (and not other things such as XSS or SQLi),
 this plugin makes it possible.
 
-By following any of the instruction sets below, the the scanner will only
+By following any of the instruction sets below, the scanner will only
 perform Log4Shell checks on all insertion points if the scan configuration
 created as a result is used.
 
@@ -60,7 +60,7 @@ This one used to be harder, but [@alright21 made it much easier][6].
 3. Click on one of the issues to move the focus to that list
 4. Press `Ctrl` + `A`
 5. Right click on the list and click on `Enabled`, this will disable all issues
-6. Manually check the box at the last one called `Extension generated issue` to enabled that
+6. Manually check the box at the last one called `Extension generated issue` to enable that
 7. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
 
 Building
