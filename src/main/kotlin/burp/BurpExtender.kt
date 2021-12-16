@@ -19,6 +19,7 @@
 package burp
 
 import java.io.PrintWriter
+
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -61,9 +62,9 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
         callbacks.registerScannerCheck(this)
         callbacks.registerExtensionStateListener(this)
 
-        val stdout = PrintWriter(callbacks.getStdout(), true)
-        stdout.println("log4shell scanner loaded")
-        stdout.close()
+        PrintWriter(callbacks.stdout, true).use { stdout ->
+            stdout.println("$NAME loaded")
+        }
     }
 
     override fun doPassiveScan(baseRequestResponse: IHttpRequestResponse?): MutableList<IScanIssue> =
