@@ -3,10 +3,10 @@ Log4Shell scanner for Burp Suite
 
 ![screenshot](screenshot.png)
 
-## [Video Demonstration](https://streamable.com/z1qkax)
-
 Detailed description can be found [in our blog post about this plugin][1],
-you can also [▶️ watch a recorded demonstration video][3].
+you can also [▶️ watch a recorded demonstration video][3]. (There's also
+[a bit longer video][7] by @nu11secur1ty that also demonstrates setting up
+a vulnerable application.)
 
 Note about detection capabilities: this plugin will only supply the built-in
 active scanner with payloads, thus for optimal coverage vs. performance, you'll
@@ -83,3 +83,4 @@ see `LICENSE.md`.
 [4]: https://github.com/silentsignal/burp-log4shell/issues/3
 [5]: https://github.com/PortSwigger/active-scan-plus-plus/commit/b485a07
 [6]: https://github.com/silentsignal/burp-log4shell/issues/1
+[7]: https://streamable.com/z1qkax
