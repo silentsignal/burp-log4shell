@@ -3,6 +3,8 @@ Log4Shell scanner for Burp Suite
 
 ![screenshot](screenshot.png)
 
+## [Video Demonstration](https://streamable.com/z1qkax)
+
 Detailed description can be found [in our blog post about this plugin][1],
 you can also [▶️ watch a recorded demonstration video][3].
 
