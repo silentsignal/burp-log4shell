@@ -18,6 +18,8 @@
 
 package burp
 
+import java.io.PrintWriter
+
 import java.net.URL
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -59,6 +61,10 @@ class BurpExtender : IBurpExtender, IScannerCheck, IExtensionStateListener {
         callbacks.setExtensionName(NAME)
         callbacks.registerScannerCheck(this)
         callbacks.registerExtensionStateListener(this)
+
+        PrintWriter(callbacks.stdout, true).use { stdout ->
+            stdout.println("$NAME loaded")
+        }
     }
 
     override fun doPassiveScan(baseRequestResponse: IHttpRequestResponse?): MutableList<IScanIssue> =
@@ -186,11 +192,15 @@ private fun extractHostUser(query: ByteArray): Pair<String, String?>? {
     val len = query[12].toInt()
     if (len and 0xc0 != 0) return null
     val decoded = query.decodeToString(startIndex = 13, endIndex = 13 + len)
-    if (decoded.startsWith(QUERY_HOSTNAME)) {
-        return Pair(decoded.substring(1), null)
-    } else if (decoded.startsWith(QUERY_HOSTUSER)) {
-        val parts = decoded.substring(1).split("-s2u-")
-        if (parts.size != 2) return null
-        return Pair(parts[0], parts[1])
-    } else return null
+    when {
+        decoded.startsWith(QUERY_HOSTNAME) -> {
+            return Pair(decoded.substring(1), null)
+        }
+        decoded.startsWith(QUERY_HOSTUSER) -> {
+            val parts = decoded.substring(1).split("-s2u-")
+            if (parts.size != 2) return null
+            return Pair(parts[0], parts[1])
+        }
+        else -> return null
+    }
 }

@@ -6,10 +6,15 @@ Log4Shell scanner for Burp Suite
 Detailed description can be found [in our blog post about this plugin][1],
 you can also [▶️ watch a recorded demonstration video][3].
 
+Note about detection capabilities: this plugin will only supply the built-in
+active scanner with payloads, thus for optimal coverage vs. performance, you'll
+have to configure your scan properly – just as with any other built-in or
+extension-provided scan. See [#3][4] for detailed explanation regarding this matter.
+
 Comparison
 ----------
 
-| Feature | Log4Shell scanner (this one) | ActiveScan++ (PortSwigger/active-scan-plus-plus@b485a07) |
+| Feature | Log4Shell scanner (this one) | ActiveScan++ ([`b485a07`][5]) |
 | --- | :---: | :---: |
 | Synchronous detection | ✔️ | ✔️ |
 | Asynchronous detection | ✔️ | ❌ |
@@ -23,7 +28,7 @@ Single-issue scan
 If you'd like to scan only for Log4j (and not other things such as XSS or SQLi),
 this plugin makes it possible.
 
-By following any of the instruction sets below, the the scanner will only
+By following any of the instruction sets below, the scanner will only
 perform Log4Shell checks on all insertion points if the scan configuration
 created as a result is used.
 
@@ -48,14 +53,14 @@ This is the version that's demonstrated in the above linked video.
 
 ### The manual way ###
 
-This one used to be harder, but @alright21 made it much easier.
+This one used to be harder, but [@alright21 made it much easier][6].
 
 1. Create a new `Scan Configuration`
 2. Expand `Issues Reported`
 3. Click on one of the issues to move the focus to that list
 4. Press `Ctrl` + `A`
 5. Right click on the list and click on `Enabled`, this will disable all issues
-6. Manually check the box at the last one called `Extension generated issue` to enabled that
+6. Manually check the box at the last one called `Extension generated issue` to enable that
 7. Disable every other extension (if applicable) that have an active scan check registered (such as ActiveScan++, Backslash powered scanning, Burp Bounty, etc.) so that only the Log4Shell scanner runs
 
 Building
@@ -73,3 +78,6 @@ see `LICENSE.md`.
 [1]: https://blog.silentsignal.eu/2021/12/12/our-new-tool-for-enumerating-hidden-log4shell-affected-hosts/
 [2]: https://raw.githubusercontent.com/silentsignal/burp-log4shell/master/extensions-only.json
 [3]: https://vimeo.com/656095367/3642ba0859
+[4]: https://github.com/silentsignal/burp-log4shell/issues/3
+[5]: https://github.com/PortSwigger/active-scan-plus-plus/commit/b485a07
+[6]: https://github.com/silentsignal/burp-log4shell/issues/1
