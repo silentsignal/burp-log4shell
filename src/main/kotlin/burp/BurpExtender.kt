@@ -1,5 +1,5 @@
 /*
- * This file is part of Log4Shell scanner for Burp Suite (https://github.com/silentsignal/burp-piper)
+ * This file is part of Log4Shell scanner for Burp Suite (https://github.com/silentsignal/burp-log4shell)
  * Copyright (c) 2021 Andras Veres-Szentkiralyi
  *
  * This program is free software: you can redistribute it and/or modify
